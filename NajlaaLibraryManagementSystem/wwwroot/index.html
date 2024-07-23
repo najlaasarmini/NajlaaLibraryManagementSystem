@@ -1,0 +1,98 @@
+﻿<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>اختيار الفئات</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 0;
+            direction: rtl;
+        }
+
+        label {
+            margin-right: 10px;
+        }
+
+        select {
+            margin-bottom: 20px;
+            padding: 5px;
+            width: 200px;
+        }
+    </style>
+</head>
+<body>
+    <h1>اختيار الفئات</h1>
+
+    <label for="parentCategory">الفئة الرئيسية:</label>
+    <select id="parentCategory">
+        <option value="">اختر الفئة الرئيسية</option>
+    </select>
+
+    <br>
+
+    <label for="subCategory">الفئة الفرعية:</label>
+    <select id="subCategory">
+        <option value="">اختر الفئة الفرعية</option>
+    </select>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const parentDropdown = document.getElementById('parentCategory');
+            const subCategoryDropdown = document.getElementById('subCategory');
+
+            // تحميل فئات الوالدين عند تحميل الصفحة
+            fetch('/api/v1/ParentCategories')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(parentCategories => {
+                    parentDropdown.innerHTML = '<option value="">اختر الفئة الرئيسية</option>'; // إعادة تعيين الخيارات
+                    parentCategories.forEach(parent => {
+                        const option = document.createElement('option');
+                        option.value = parent.parentCategoryID; // تأكد من تطابق الاسم مع JSON
+                        option.text = parent.parentCategoryName; // تأكد من تطابق الاسم مع JSON
+                        parentDropdown.add(option);
+                    });
+                })
+                .catch(error => {
+                    console.error('There was a problem with the fetch operation:', error);
+                });
+
+            // تحديث الفئات الفرعية عند اختيار فئة الوالدين
+            parentDropdown.addEventListener('change', function () {
+                const parentId = this.value;
+
+                if (parentId) {
+                    fetch(`/api/v1/SubCategories/ByParentCategory/${parentId}`)
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('Network response was not ok');
+                            }
+                            return response.json();
+                        })
+                        .then(subCategories => {
+                            subCategoryDropdown.innerHTML = '<option value="">اختر الفئة الفرعية</option>';
+                            subCategories.forEach(sub => {
+                                const option = document.createElement('option');
+                                option.value = sub.subCategoryID; // تأكد من تطابق الاسم مع JSON
+                                option.text = sub.subCategoryName; // تأكد من تطابق الاسم مع JSON
+                                subCategoryDropdown.add(option);
+                            });
+                        })
+                        .catch(error => {
+                            console.error('There was a problem with the fetch operation:', error);
+                        });
+                } else {
+                    subCategoryDropdown.innerHTML = '<option value="">اختر الفئة الفرعية</option>';
+                }
+            });
+        });
+    </script>
+</body>
+</html>

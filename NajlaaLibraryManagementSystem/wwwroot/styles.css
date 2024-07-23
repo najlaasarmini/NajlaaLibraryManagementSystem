@@ -1,0 +1,28 @@
+﻿/* styles.css */
+body {
+    font-family: Arial, sans-serif;
+display: flex;
+justify - content: center;
+align - items: center;
+height: 100vh;
+margin: 0;
+background - color: #f0f0f0;
+}
+
+.countdown {
+    text-align: center;
+padding: 20px;
+border: 2px solid #333;
+    border-radius: 8px;
+background - color: #fff;
+}
+
+#timer {
+    font - size: 24px;
+margin - top: 20px;
+}
+
+#timer span {
+    font - weight: bold;
+margin: 0 10px;
+}
